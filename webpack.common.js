@@ -15,7 +15,7 @@ export default {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./src/index.html",
-      title: "New App",
+      title: "Project: Weather App | The Odin Project",
     }),
   ],
   module: {
