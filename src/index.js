@@ -27,6 +27,34 @@ async function displayWeather() {
 
   weatherDiv.appendChild(image);
   weatherDiv.appendChild(description);
+
+  for (let key in weather) {
+    if (key !== "icon" && key !== "description" && key !== "Location") {
+      const condition = document.createElement("div");
+      condition.classList.add("condition");
+
+      const label = document.createElement("span");
+      label.classList.add("condition-label");
+      label.textContent = key;
+
+      const value = document.createElement("value");
+      value.classList.add("condition-value");
+
+      if (key === "Temperature" || key === "Feels Like") {
+        const tempF = weather[key];
+        const tempC = fahrenheitToCelsius(tempF);
+        value.textContent = `${tempC} °C | ${tempF} °F`;
+      } else if (key === "Precipitation Probability") {
+        value.textContent = `${weather[key]}%`;
+      } else {
+        value.textContent = weather[key];
+      }
+
+      condition.appendChild(label);
+      condition.appendChild(value);
+      weatherDiv.appendChild(condition);
+    }
+  }
 }
 
 async function getWeather(location) {
@@ -35,13 +63,13 @@ async function getWeather(location) {
   if (!data) return;
 
   const weather = {
-    resolvedAddress: data.resolvedAddress,
-    dateTime: data.currentConditions.datetime,
+    "Location": data.resolvedAddress,
+    "Time": data.currentConditions.datetime,
     description: data.description,
-    conditions: data.currentConditions.conditions,
-    temp: data.currentConditions.temp,
-    feelsLike: data.currentConditions.feelslike,
-    precipProb: data.currentConditions.precipprob,
+    "Conditions": data.currentConditions.conditions,
+    "Temperature": data.currentConditions.temp,
+    "Feels Like": data.currentConditions.feelslike,
+    "Precipitation Probability": data.currentConditions.precipprob,
     icon: data.currentConditions.icon,
   };
 
@@ -58,6 +86,10 @@ async function getDataFromServer(location) {
   } catch (error) {
     console.error(`Error: ${error}`);
   }
+}
+
+function fahrenheitToCelsius(temp) {
+  return Math.round((temp - 32) * (5 / 9) * 10) / 10;
 }
 
 const searchButton = document.getElementById("search");
